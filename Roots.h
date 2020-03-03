@@ -11,6 +11,13 @@ public:
     Roots();
 
     virtual ~Roots();
+
+    float Bisection(float f, float a, float b, int maxIter, float eps);
+
+    float Newton(float f, float derF, float x, int maxIter, float eps, float delta);
+
+    float Secant(float f, float a, float b, int maxIter, float eps);
+
 };
 
 
