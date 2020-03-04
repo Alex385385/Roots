@@ -5,6 +5,7 @@
 #ifndef ROOTS_ROOTS_H
 #define ROOTS_ROOTS_H
 
+#include <vector>
 
 class Roots {
 public:
@@ -17,6 +18,10 @@ public:
     float Newton(float f, float derF, float x, int maxIter, float eps, float delta);
 
     float Secant(float f, float a, float b, int maxIter, float eps);
+
+    float f(float x, std::vector<float> equ);
+
+    float derF(std::vector<float> equ)
 
 };
 

@@ -12,6 +12,7 @@ Roots::Roots() {}
 
 Roots::~Roots() {}
 
+
 float Roots::Bisection(float f, float a, float b, int maxIter, float eps) {
     float fa;
     float fb;
@@ -166,6 +167,27 @@ float Roots::Secant(float f, float a, float b, int maxIter, float eps) {
 
     cout << "Maximum number of iterations reached!" << endl;
     return a;
+}
+
+float Roots::f(float x, vector<float> equ) {
+    float returnVal = 0;
+
+    int arraySize = 3;
+    for(int i = 0; i < arraySize; i++) {
+        float temp = pow(x, arraySize - i);
+
+        equ[i] = equ[i] * temp;
+    }
+
+    for(int i = 0; i < arraySize; i++) {
+        returnVal += equ[i];
+    }
+
+    return 0;
+}
+
+float Roots::derF(std::vector<float> equ) {
+    return 0;
 }
 
 /*
