@@ -2,10 +2,11 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include "Roots.h"
 
 using namespace std;
 
-void readFile(string fileName, int &n, vector<vector<float>> &coeff, vector<float> &constt) {
+void readFile(string fileName, int &n, vector<float> &constt) {
     fstream myFile;
     myFile.open(fileName);
     if(!myFile) {
@@ -13,16 +14,9 @@ void readFile(string fileName, int &n, vector<vector<float>> &coeff, vector<floa
     }
 
     myFile >> n;
-    coeff.resize(n, vector<float>(n));
-    constt.resize(n);
+    constt.resize(n + 1);
 
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            myFile >> coeff[i][j];
-        }
-    }
-
-    for (int i = 0; i < n; ++i) {
+    for (int i = 0; i < n + 1; ++i) {
         myFile >> constt[i];
     }
 }
@@ -39,6 +33,13 @@ void writeFile(vector<float> sol, int n, string fileName) {
 }
 
 int main(int argc, char* argv[]) {
+    vector<float> ff = {1, 2, 10, -20};
+    Roots rt;
+    float y = rt.Newton(ff, 2, 10000, 3);
+
+
+    cout << setprecision (32) << y << endl;
+
     std::cout << "Hello, World!" << std::endl;
     return 0;
 }

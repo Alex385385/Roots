@@ -8,20 +8,23 @@
 #include <vector>
 
 class Roots {
+private:
+    float Newton(std::vector<float> f, std::vector<float> derF, float x, int maxIter, float eps, float delta, int n);
+
 public:
     Roots();
 
     virtual ~Roots();
 
-    float Bisection(float f, float a, float b, int maxIter, float eps);
+    float Bisection(std::vector<float> f, float a, float b, int maxIter, float eps, int n);
 
-    float Newton(float f, float derF, float x, int maxIter, float eps, float delta);
+    float Newton(std::vector<float> f, float x, int maxIter, int n);
 
-    float Secant(float f, float a, float b, int maxIter, float eps);
+    float Secant(std::vector<float> f, float a, float b, int maxIter, float eps, int n);
 
-    float f(float x, std::vector<float> equ);
+    float func(float x, std::vector<float> equ, int arraySize);
 
-    float derF(std::vector<float> equ)
+    std::vector<float> derF(std::vector<float> equ, int n);
 
 };
 
