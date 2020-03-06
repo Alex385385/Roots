@@ -6,8 +6,6 @@
 #include "Roots.h"
 #include <cmath>
 
-//#define eps = 0.00000001;
-
 using namespace std;
 
 Roots::Roots() {}
@@ -15,13 +13,15 @@ Roots::Roots() {}
 Roots::~Roots() {}
 
 
-float Roots::Bisection(vector<float> f, float a, float b, int maxIter, float eps, int n) {
+float Roots::Bisection(vector<float> f, float a, float b, int maxIter, float eps, int n, bool &conv, int &iter) {
     float fa = func(a, f, n);
     float fb = func(b, f, n);
     float c = 0.0;
 
     if((fa * fb) >= 0) {
         cout << "Inadequate values for a and b." << endl;
+        conv = false;
+        iter = 0;
         return -1;
     }
 
@@ -32,7 +32,9 @@ float Roots::Bisection(vector<float> f, float a, float b, int maxIter, float eps
         float fc = func(c, f, n);
 
         if(abs(error) < eps || fc == 0) {
-            cout << "Algorithm has converged after " << i << " iterations!" << endl;
+            cout << "Algorithm has converged after " << i + 1 << " iterations!" << endl;
+            conv = true;
+            iter = i + 1;
             return c;
         }
 
@@ -46,16 +48,18 @@ float Roots::Bisection(vector<float> f, float a, float b, int maxIter, float eps
     }
 
     cout << "Max iterations reached without convergence..." << endl;
+    conv = false;
+    iter = maxIter;
     return c;
 }
 
-float Roots::Newton(vector<float> f, float x, int maxIter, int n) {
+float Roots::Newton(vector<float> f, float x, int maxIter, int n, bool &conv, int &iter) {
     vector<float> der(derF(f, n));
 
-    return Newton(f, der, x, maxIter, 0.000000001, 0.00000000000001, n + 1);
+    return Newton(f, der, x, maxIter, 0.0000001, 0.00000000000001, n + 1, conv, iter);
 }
 
-float Roots::Newton(vector<float> f, vector<float> derF, float x, int maxIter, float eps, float delta, int n) {
+float Roots::Newton(vector<float> f, vector<float> derF, float x, int maxIter, float eps, float delta, int n, bool &conv, int &iter ) {
     float fx = func(x, f, n);
 
     for(int i = 0; i < maxIter; i++) {
@@ -63,6 +67,8 @@ float Roots::Newton(vector<float> f, vector<float> derF, float x, int maxIter, f
 
         if(abs(fd) < delta) {
             cout << "Small slope!" << endl;
+            conv = false;
+            iter = i + 1 + iter;
             return x;
         }
 
@@ -71,16 +77,20 @@ float Roots::Newton(vector<float> f, vector<float> derF, float x, int maxIter, f
         fx = func(x, f, n);
 
         if(abs(d) < eps) {
-            cout << "Algorithm has converged after " << i << " iterations!" << endl;
+            cout << "Algorithm has converged after " << i + 1 << " iterations!" << endl;
+            conv = true;
+            iter = i + 1 + iter;
             return x;
         }
     }
 
     cout << "Max iterations reached without convergence..." << endl;
+    conv = false;
+    iter = maxIter;
     return x;
 }
 
-float Roots::Secant(vector<float> f, float a, float b, int maxIter, float eps, int n) {
+float Roots::Secant(vector<float> f, float a, float b, int maxIter, float eps, int n, bool &conv, int &iter) {
     float fa = func(a, f, n);
     float fb = func(b, f, n);
 
@@ -101,7 +111,9 @@ float Roots::Secant(vector<float> f, float a, float b, int maxIter, float eps, i
         d = d * fa;
 
         if(abs(d) < eps) {
-            cout << "Algorithm has converged after " << i << " iterations!" << endl;
+            cout << "Algorithm has converged after " << i + 1 << " iterations!" << endl;
+            conv = true;
+            iter = i + 1;
             return a;
         }
 
@@ -110,43 +122,10 @@ float Roots::Secant(vector<float> f, float a, float b, int maxIter, float eps, i
     }
 
     cout << "Maximum number of iterations reached!" << endl;
+    conv = false;
+    iter = maxIter;
     return a;
 }
-
-/*
- * function Secant(f : float -> float, a : float, b : float, maxIter : int, eps : float)
-  fa := call f(a)
-  fb := call f(b)
-
-  if |fa| > |fb| then
-    swap(a, b)
-    swap(fa, fb)
-  end if
-
-  for it <- 1 to maxIter
-    if |fa| > |fb| then
-      swap(a, b)
-      swap(fa, fb)
-    end if
-
-    d := (b - a) / (fb - fa)
-    b := a
-    fb := fa
-    d := d * fa
-
-    if |d| < eps then
-      print "Algorithm has converged after #{it} iterations!"
-      return a
-    end if
-
-    a := a - d
-    fa := call f(a)
-  end for
-
-    print "Maximum number of iterations reached!"
-    return a
-end function
- */
 
 float Roots::func(float x, vector<float> equ, int arraySize) {
     float returnVal = 0;
@@ -172,4 +151,10 @@ vector<float> Roots::derF(std::vector<float> equ, int n) {
     }
 
     return newVector;
+}
+
+float Roots::Hybrid(std::vector<float> f, float a, float b, int maxIter, float eps, int n, bool &conv, int &iter) {
+    float x = Bisection(f, a, b, 10, eps, n, conv, iter);
+
+    return Newton(f, x, maxIter - 10, n, conv, iter+=10);
 }
